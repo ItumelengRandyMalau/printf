@@ -1,64 +1,118 @@
 #include "main.h"
 #include <stdarg.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
+#include <stdio.h>
 
-void print_buffer(char buffer[], int *buff_ind);
+int print_c(va_list args);
+int print_string(va_list args);
+int print_number(va_list args);
+int _strlen(char *str);
 
 /**
- * _printf - Printf function
- * @format: format.
- * Return: Printed chars.
- */
+ * _printf - proto
+ * @format: number
+ * Return: unknown
+*/
 
 int _printf(const char *format, ...)
 {
-	int charsto_print = 0;
-	va_list num_args;
+	va_list args;
+	int total_chars = 0;
 
-	if (format == null)
+	if (format == NULL)
 		return (-1);
 
-	va_list (num_args, format);
+	va_start(args, format);
 
-	while (*format)
+	for (int i = 0; format[i]; i++)
 	{
-		if (*format != '%')
+		if (format[i] == '%')
 		{
-			write(1, format, 1);
-			charsto_print++;
+			i++;
+			switch (format[i])
+			{
+				case 'c':
+					total_chars += print_c(args);
+					break;
+				case 's':
+					total_chars += print_string(args);
+					break;
+				case 'd':
+				case 'i':
+					total_chars += print_number(args);
+					break;
+				case '%':
+					total_chars += write(1, "%", 1);
+					break;
+				default:
+					total_chars += write(1, &format[i - 1], 2);
+					break;
+			}
 		}
 		else
 		{
-			format++;
-		}
-		if (*format == '\0')
-			break;
-		if (*format == '%')
-		{
-			write(1, %, 1);
-			charsto_print++;
-		}
-		else if (*format == 'c')
-		{
-			char cc = va_arg(num_args, int);
-
-			write(1, &cc, 1);
-			charsto_print++;
-		}
-		else if (*format == 's')
-		{
-			char *ptr = va_arg(num_args, char*);
-			int str_len = 0;
-
-			while (ptr[str_len] != '\0')
-				str_len++;
-			write(1, ptr, str_len);
-			charsto_print += str_len;
+			total_chars += write(1, &format[i], 1);
 		}
 	}
-	format++;
+
+	va_end(args);
+	return (total_chars);
 }
-va_end(num_args);
-return (charsto_print);
+
+/**
+ * print_c - proto
+ * @args: number
+ * Return: Unknown
+*/
+
+int print_c(va_list args)
+{
+	return (write(1, &(char){va_arg(args, int)}, 1));
+}
+
+/**
+ * print_string - proto
+ * @args: number
+ * Return: Unknown
+*/
+
+int print_string(va_list args)
+{
+	char *str = va_arg(args, char *);
+
+	return (write(1, str ? str : "(null)", _strlen(str ? str : "(null)")));
+}
+
+/**
+ * print_number - proto
+ * @args: number
+ * Return: Unknown
+*/
+
+int print_number(va_list args)
+{
+	int n = va_arg(args, int);
+	char buffer[20];
+	int i = 0, total_chars = 0;
+
+	if (n == 0)
+		return (write(1, "0", 1));
+
+	if (n < 0)
+	{
+		total_chars += write(1, "-", 1);
+		n = -n;
+	}
+
+	while (n > 0)
+	{
+		buffer[i++] = n % 10 + '0';
+		n /= 10;
+	}
+
+	while (--i >= 0)
+	{
+		total_chars += write(1, &buffer[i], 1);
+	}
+
+	return (total_chars);
+}
