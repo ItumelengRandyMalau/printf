@@ -3,13 +3,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-/**
- * _printf - function that produces output according to a format.
- * @format: character string(input).
- * Return: number of characters printed (excluding the null byte).
- */
-int _printf(const char *format, ...)
-	#include "main.h"
 
 void print_buffer(char buffer[], int *buff_ind);
 
@@ -18,7 +11,7 @@ void print_buffer(char buffer[], int *buff_ind);
  * @format: format.
  * Return: Printed chars.
  */
-int _printf(const char *format, ...);
+
 int _printf(const char *format, ...)
 {
 	int charsto_print = 0;
