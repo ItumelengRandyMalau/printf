@@ -1,5 +1,8 @@
 #include "main.h"
 #include <stdarg.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
 /**
  * _printf - function that produces output according to a format.
  * @format: character string(input).
