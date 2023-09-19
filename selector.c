@@ -1,5 +1,4 @@
 #include "main.h"
-#include "handler.c"
 
 /**
  * selector - prototype

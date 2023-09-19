@@ -1,8 +1,9 @@
 #include "main.h"
+#include "_putchar.c"
 
 /**
  * c_handler - prototype
- * 
+ *
  * @arg: codes
  * Return: returns
 */
@@ -11,6 +12,7 @@ int c_handler(va_list arg)
 {
 	int count;
 	char get_char = va_arg(arg, int);
+
 	count = _putchar(get_char);
 
 	return (count);
@@ -27,6 +29,7 @@ int d_handler(va_list arg)
 {
 	int count;
 	int val = va_arg(arg, int);
+
 	count = print_number(val, 0);
 
 	return (count);
