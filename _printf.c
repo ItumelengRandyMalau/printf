@@ -1,4 +1,6 @@
 #include "main.h"
+#include "_putchar.c"
+#include "selector.c"
 
 /**
  * _printf - prototype
