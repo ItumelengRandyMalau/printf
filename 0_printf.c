@@ -1,118 +1,63 @@
 #include "main.h"
-#include <stdarg.h>
-#include <stdio.h>
-
-int print_c(va_list args);
-int print_string(va_list args);
-int print_number(va_list args);
-int _strlen(char *str);
+void print_buffer(char buffer[], int *buff_ind);
 
 /**
- * _printf - proto
- * @format: number
- * Return: unknown
-*/
-
+ * _printf - Custom printf function
+ * @format: Format string
+ * Return: Number of characters printed
+ */
 int _printf(const char *format, ...)
 {
-	va_list args;
-	int total_chars = 0;
+	int index, total_chars = 0, printed_chars = 0;
+	int flags, width, precision, size, buff_index = 0;
+	va_list arg_list;
+	char buffer[BUFF_SIZE];
 
 	if (format == NULL)
 		return (-1);
 
-	va_start(args, format);
+	va_start(arg_list, format);
 
-	for (int i = 0; format[i]; i++)
+	for (index = 0; format && format[index] != '\0'; index++)
 	{
-		if (format[i] == '%')
+		if (format[index] != '%')
 		{
-			i++;
-			switch (format[i])
-			{
-				case 'c':
-					total_chars += print_c(args);
-					break;
-				case 's':
-					total_chars += print_string(args);
-					break;
-				case 'd':
-				case 'i':
-					total_chars += print_number(args);
-					break;
-				case '%':
-					total_chars += write(1, "%", 1);
-					break;
-				default:
-					total_chars += write(1, &format[i - 1], 2);
-					break;
-			}
+			buffer[buff_index++] = format[index];
+			if (buff_index == BUFF_SIZE)
+				print_buffer(buffer, &buff_index);
+			printed_chars++;
 		}
 		else
 		{
-			total_chars += write(1, &format[i], 1);
+			print_buffer(buffer, &buff_index);
+			flags = get_flags(format, &index);
+			width = get_width(format, &index, arg_list);
+			precision = get_precision(format, &index, arg_list);
+			size = get_size(format, &index);
+			++index;
+			printed_chars = handle_print(format, &index, arg_list, buffer,
+							flags, width, precision, size);
+			if (printed_chars == -1)
+				return (-1);
+			total_chars += printed_chars;
 		}
 	}
 
-	va_end(args);
-	return (total_chars);
-}
-
-/**
- * print_c - proto
- * @args: number
- * Return: Unknown
-*/
-
-int print_c(va_list args)
-{
-	return (write(1, &(char){va_arg(args, int)}, 1));
-}
-
-/**
- * print_string - proto
- * @args: number
- * Return: Unknown
-*/
-
-int print_string(va_list args)
-{
-	char *str = va_arg(args, char *);
-
-	return (write(1, str ? str : "(null)", _strlen(str ? str : "(null)")));
-}
-
-/**
- * print_number - proto
- * @args: number
- * Return: Unknown
-*/
-
-int print_number(va_list args)
-{
-	int n = va_arg(args, int);
-	char buffer[20];
-	int i = 0, total_chars = 0;
-
-	if (n == 0)
-		return (write(1, "0", 1));
-
-	if (n < 0)
-	{
-		total_chars += write(1, "-", 1);
-		n = -n;
-	}
-
-	while (n > 0)
-	{
-		buffer[i++] = n % 10 + '0';
-		n /= 10;
-	}
-
-	while (--i >= 0)
-	{
-		total_chars += write(1, &buffer[i], 1);
-	}
+	print_buffer(buffer, &buff_index);
+	va_end(arg_list);
 
 	return (total_chars);
+}
+
+/**
+ * print_buffer - Prints the contents of the buffer if it exists
+ * @buffer: Char array
+ * @buff_index: Index representing current length of buffer
+ */
+void print_buffer(char buffer[], int *buff_index)
+{
+	if (*buff_index > 0)
+		write(1, &buffer[0], *buff_index);
+
+	*buff_index = 0;
 }
