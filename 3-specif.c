@@ -180,7 +180,6 @@ int print_hexa(va_list types, char map_to[], char buffer[],
 	int print_unsigned(va_list types, char buffer[],
 
 	int flags, int width, int precision, int size)
-
 {
 	int i = BUFF_SIZE - 2;
 

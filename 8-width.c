@@ -72,4 +72,3 @@ int get_width(const char *format, int *i, va_list list)
 
 	return (width);
 }
->>>>>>> e8d77b1da72d26d7b425a63df93a6dbb24213afd:8-width.c
